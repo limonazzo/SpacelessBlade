@@ -13,7 +13,20 @@ class SpacelessBladeProvider extends \Illuminate\Support\ServiceProvider
 
         //Register the Ending Tag
         Blade::directive('endspaceless', function() {
-            return "<?php echo preg_replace('/>\\s+</', '><', ob_get_clean()); ?>";
+
+            $output = <<< ENDLINEASD
+<?php
+\$filtersspaceless = [
+    '/<!--([^\[|(<!)].*)/'      => '',
+    '/(?<!\S)\/\/\s*[^\\r\\n]*/'	=> '',
+    '/\s{2,}/'			        => ' ',
+    '/(\\r?\\n)/'			        => '',
+    '/(\>)\s*(\<)/m'            => '$1$2',
+];
+echo preg_replace(array_keys(\$filtersspaceless), array_values(\$filtersspaceless), ob_get_clean());
+?>
+ENDLINEASD;
+            return $output;
         });
     }
 
